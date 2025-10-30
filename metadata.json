@@ -1,0 +1,5 @@
+{
+  "name": "React Invoice Generator",
+  "description": "A simple and elegant invoice generator built with React and Tailwind CSS. Create, preview, and print professional invoices, and manage your customers with ease.",
+  "requestFramePermissions": []
+}

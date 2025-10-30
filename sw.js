@@ -1,4 +1,4 @@
-const CACHE_NAME = 'invoice-generator-v3';
+const CACHE_NAME = 'invoice-generator-v4'; // Incremented cache version
 const URLS_TO_CACHE = [
   './',
   './index.html',
@@ -31,10 +31,14 @@ const URLS_TO_CACHE = [
   './components/icons/UserIcon.tsx',
   './components/icons/KeyIcon.tsx',
   './components/icons/GlobeAltIcon.tsx',
+  './components/icons/ArrowDownTrayIcon.tsx',
+  './components/icons/ArrowUpTrayIcon.tsx',
   'https://cdn.tailwindcss.com',
   'https://aistudiocdn.com/react@^19.2.0',
   'https://aistudiocdn.com/react-dom@^19.2.0/',
-  'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js'
+  'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js',
+  'https://unpkg.com/esbuild-wasm@0.17.19/esbuild.min.js',
+  'https://unpkg.com/esbuild-wasm@0.17.19/esbuild.wasm'
 ];
 
 self.addEventListener('install', (event) => {
@@ -66,8 +70,8 @@ self.addEventListener('fetch', (event) => {
         return fetch(event.request).then(
           (networkResponse) => {
             // Check if we received a valid response
-            if(!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-               if (networkResponse.type !== 'opaque') console.log('Not caching non-basic/opaque response:', event.request.url);
+            if(!networkResponse || networkResponse.status !== 200 || (networkResponse.type !== 'basic' && networkResponse.type !== 'opaque')) {
+               console.log('Not caching non-basic/opaque response:', event.request.url, networkResponse.type);
             }
             return networkResponse;
           }

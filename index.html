@@ -62,7 +62,46 @@
 </head>
   <body class="bg-gray-50 dark:bg-gray-900">
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
+    <script src="https://unpkg.com/esbuild-wasm@0.17.19/esbuild.min.js"></script>
+    <script>
+      (async () => {
+        try {
+          // Initialize esbuild
+          await esbuild.initialize({
+            wasmURL: 'https://unpkg.com/esbuild-wasm@0.17.19/esbuild.wasm'
+          });
+
+          // Fetch the source code of your main TSX file
+          const response = await fetch('./index.tsx');
+          if (!response.ok) {
+            throw new Error(`Failed to fetch index.tsx: ${response.status} ${response.statusText}`);
+          }
+          const source = await response.text();
+
+          // Transpile TSX to JavaScript
+          const result = await esbuild.transform(source, {
+            loader: 'tsx',
+            target: 'es2020',
+          });
+
+          // Create a new script element and inject the transpiled code
+          const script = document.createElement('script');
+          script.type = 'module';
+          script.innerHTML = result.code;
+          document.body.appendChild(script);
+        } catch (error) {
+          console.error("Error during application startup:", error);
+          const root = document.getElementById('root');
+          if (root) {
+            root.innerHTML = `<div style="padding: 2rem; text-align: center; color: #ef4444;">
+              <h2>Failed to load application</h2>
+              <p>${error.message}</p>
+              <p>Please check the browser console for more details.</p>
+            </div>`;
+          }
+        }
+      })();
+    </script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
